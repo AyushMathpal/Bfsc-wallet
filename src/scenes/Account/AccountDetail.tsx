@@ -5,6 +5,7 @@ import { Account } from '../../models/Account';
 import { ethers } from 'ethers';
 import { toFixedIfNecessary } from '../../utils/AccountUtils';
 import './Account.css';
+import AccountTransactions from './AccountTransactions';
 
 interface AccountDetailProps {
   account: Account
@@ -122,6 +123,7 @@ const AccountDetail: React.FC<AccountDetailProps> = ({account}) => {
             {networkResponse.status === 'error' && <p>Error occurred while transferring tokens: {networkResponse.message}</p>}
             </>
         }
+        <AccountTransactions account={account} />
     </div>
 
   )
