@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { sendToken } from '../../utils/TransactionUtils';
-import { goerli } from '../../models/Chain';
+import { sepolia } from '../../models/Chain';
 import { Account } from '../../models/Account';
 import { ethers } from 'ethers';
 import { toFixedIfNecessary } from '../../utils/AccountUtils';
@@ -23,7 +23,7 @@ const AccountDetail: React.FC<AccountDetailProps> = ({account}) => {
 
   useEffect(() => {
     const fetchData = async () => {
-        const provider = new ethers.providers.JsonRpcProvider(goerli.rpcUrl);
+        const provider = new ethers.providers.JsonRpcProvider(sepolia.rpcUrl);
         let accountBalance = await provider.getBalance(account.address);
         setBalance((String(toFixedIfNecessary(ethers.utils.formatEther(accountBalance)))));
     }
@@ -39,7 +39,6 @@ const AccountDetail: React.FC<AccountDetailProps> = ({account}) => {
   }
 
   async function transfer() {
-    // Set the network response status to "pending"
     setNetworkResponse({
       status: 'pending',
       message: '',
@@ -49,18 +48,15 @@ const AccountDetail: React.FC<AccountDetailProps> = ({account}) => {
       const { receipt } = await sendToken(amount, account.address, destinationAddress, account.privateKey);
 
       if (receipt.status === 1) {
-        // Set the network response status to "complete" and the message to the transaction hash
         setNetworkResponse({
           status: 'complete',
-          message: <p>Transfer complete! <a href={`${goerli.blockExplorerUrl}/tx/${receipt.transactionHash}`} target="_blank" rel="noreferrer">
+          message: <p>Transfer complete! <a href={`${sepolia.blockExplorerUrl}/tx/${receipt.transactionHash}`} target="_blank" rel="noreferrer">
             View transaction
             </a></p>,
         });
         return receipt;
       } else {
-        // Transaction failed
         console.log(`Failed to send ${receipt}`);
-        // Set the network response status to "error" and the message to the receipt
         setNetworkResponse({
           status: 'error',
           message: JSON.stringify(receipt),
@@ -68,9 +64,8 @@ const AccountDetail: React.FC<AccountDetailProps> = ({account}) => {
         return { receipt };
       }
     } catch (error: any) {
-      // An error occurred while sending the transaction
       console.error({ error });
-      // Set the network response status to "error" and the message to the error
+      
       setNetworkResponse({
         status: 'error',
         message: error.reason || JSON.stringify(error),
@@ -81,7 +76,7 @@ const AccountDetail: React.FC<AccountDetailProps> = ({account}) => {
   return (
     <div className='AccountDetail container'>
         <h4>
-            Address: <a href={`https://goerli.etherscan.io/address/${account.address}`} target="_blank" rel="noreferrer">
+            Address: <a href={`https://sepolia.etherscan.io/address/${account.address}`} target="_blank" rel="noreferrer">
             {account.address}
             </a><br/>
             Balance: {balance} ETH
@@ -108,7 +103,7 @@ const AccountDetail: React.FC<AccountDetailProps> = ({account}) => {
         </div>
 
         <button
-            className="btn btn-primary"
+            className="button-34"
             type="button"
             onClick={transfer}
             disabled={!amount || networkResponse.status === 'pending'}
